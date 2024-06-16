@@ -1,0 +1,30 @@
+prometheus:
+  prometheusSpec:
+    scrapeInterval: 5s
+    scrapeTimeout: 3s
+    evaluationInterval: 30s
+    enableFeatures:
+     - exemplar-storage
+    additionalScrapeConfigs:
+      - job_name: 'dapr'
+        honor_labels: true
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              own_namespace: true
+              names: [opentelemetry]
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_dapr_collector_demo]
+            action: keep
+            regex: true
+      - job_name: 'traefik'
+        honor_labels: true
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              own_namespace: true
+              names: [kube-system]
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_container_name]
+            action: keep
+            regex: "traefik"

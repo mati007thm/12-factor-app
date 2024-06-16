@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: controller-ingress
+  namespace: 12-factor-app
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`12factor.127.0.0.1.nip.io`) && PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: controller
+          port: 3000

@@ -1,0 +1,29 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: prometheus-ingress
+  namespace: observability
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`prom.127.0.0.1.nip.io`) && PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: prometheus-kube-prometheus-prometheus
+          port: 9090
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: grafana-ingress
+  namespace: observability
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`grafana.127.0.0.1.nip.io`) && PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: prometheus-grafana
+          port: 80

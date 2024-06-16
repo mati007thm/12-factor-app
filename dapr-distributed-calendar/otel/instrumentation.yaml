@@ -1,0 +1,50 @@
+# apiVersion: opentelemetry.io/v1alpha1
+# kind: Instrumentation
+# metadata:
+#   name: node-instrumentation
+# spec:
+#   exporter:
+#     endpoint: http://otel-dapr-collector:4317
+#   propagators:
+#     - tracecontext
+#     - baggage
+#   sampler:
+#     type: parentbased_traceidratio
+#     argument: "1"
+# ---
+# # Auto instrumentation for python is not working yet due to version mismatch
+# apiVersion: opentelemetry.io/v1alpha1
+# kind: Instrumentation
+# metadata:
+#   name: python-instrumentation
+# spec:
+#   exporter:
+#     endpoint: http://otel-dapr-collector:4317
+#   env:
+#   propagators:
+#     - tracecontext
+#     - baggage
+#   sampler:
+#     type: parentbased_traceidratio
+#     argument: "1"
+#   python:
+#     env:
+#       - name: OTEL_LOGS_EXPORTER
+#         value: otlp_proto_http
+#       - name: OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED
+#         value: 'true'
+# ---
+# # Auto instrumentation for go is not working yet
+# apiVersion: opentelemetry.io/v1alpha1
+# kind: Instrumentation
+# metadata:
+#   name: go-instrumentation
+# spec:
+#   exporter:
+#     endpoint: http://otel-dapr-collector:4318
+#   propagators:
+#     - tracecontext
+#     - baggage
+#   sampler:
+#     type: parentbased_traceidratio
+#     argument: "1"
