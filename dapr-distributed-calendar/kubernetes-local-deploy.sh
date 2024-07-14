@@ -75,6 +75,24 @@ helm install redis bitnami/redis --namespace 12-factor-app --wait
 kubectl apply -f kubernetes/.
 kubectl wait --for=condition=ready pod --all --timeout=200s -n 12-factor-app
 
+# setup OpenCost for cost monitoring OPTIONAL
+kubectl create namespace opencost
+helm install opencost --repo https://opencost.github.io/opencost-helm-chart opencost \
+  --namespace opencost -f open-cost/local.yaml --wait
+
+# setup kubecost for cost monitoring OPTIONAL
+# helm upgrade --install kubecost \
+#   --repo https://kubecost.github.io/cost-analyzer/ cost-analyzer \
+#   --namespace kubecost --create-namespace \
+#   --set global.prometheus.fqdn=http://prometheus-kube-prometheus-prometheus.observability.svc:9090 \
+#   --set global.prometheus.enabled=false \
+#   --set kubecostToken="bWF0dGhpYXMudGhldWVybWFubkBpY2xvdWQuY29txm343yadf98" --wait
+# helm upgrade --install kubecost cost-analyzer \
+#   --repo https://kubecost.github.io/cost-analyzer/ \
+#   --namespace kubecost --create-namespace \
+#   --set kubecostToken="bWF0dGhpYXMudGhldWVybWFubkBpY2xvdWQuY29txm343yadf98" --wait
+# kubectl apply -f kubecost/ingress.yaml
+
 # setup locust for loadgeneration OPTIONAL
 kubectl create configmap my-loadtest-locustfile --from-file locust/main.py -n 12-factor-app
 helm repo add deliveryhero https://charts.deliveryhero.io/

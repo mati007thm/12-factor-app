@@ -1,0 +1,12 @@
+extraVolumes:
+  - name: service-key-secret
+    secret:
+      secretName: azure-service-key
+opencost:
+  exporter:
+    extraVolumeMounts:
+      - mountPath: /var/secrets
+        name: service-key-secret
+  # cloudIntegrationSecret: cloud-costs
+  # cloudCost:
+  #   enabled: true
