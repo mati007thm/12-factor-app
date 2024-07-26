@@ -1,0 +1,13 @@
+# https://github.com/deliveryhero/helm-charts/blob/master/stable/locust/values.yaml
+worker:
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 100
+  resources:
+    limits:
+      cpu: 1300m
+      memory: 5G
+    requests:
+      cpu: 1300m
+      memory: 5G

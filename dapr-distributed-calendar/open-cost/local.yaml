@@ -9,7 +9,8 @@ networkPolicies:
     # -- Labels applied to the Prometheus server pod(s)
     labels:
       app.kubernetes.io/name: prometheus
-metrics:
+      app.kubernetes.io/instance: prometheus-kube-prometheus-prometheus
+opencost:
   prometheus:
     internal:
       # -- Use in-cluster Prometheus
@@ -19,4 +20,4 @@ metrics:
       # -- Namespace of in-cluster Prometheus
       namespaceName: observability
       # -- Service port of in-cluster Prometheus
-      port: 80
+      port: 9090

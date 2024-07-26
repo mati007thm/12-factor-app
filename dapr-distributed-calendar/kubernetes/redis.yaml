@@ -26,12 +26,91 @@ spec:
   type: pubsub.redis
   version: v1
   metadata:
+  - name: consumerID
+    value: "autoscaling-subscriber"
   - name: redisHost
     value: redis-master:6379
   - name: redisPassword
-    # value: "jW6UBn6aea" # kubectl get secret --namespace default redis -o jsonpath="{.data.redis-password}" | base64 --decode
+    # value: "jW6UBn6aea" # kubectl get secret --namespace 12-factor-app redis -o jsonpath="{.data.redis-password}" | base64 --decode
     secretKeyRef:
       name: redis
       key: redis-password
 auth:
   secretStore: kubernetes
+---
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: keda-redis-stream-triggerauth
+  namespace: 12-factor-app
+spec:
+  secretTargetRef:
+    - parameter: username
+      name: redis-streams-auth # name of the Secret
+      key: redis_username # name of the key in the Secret
+    - parameter: password
+      name: redis-streams-auth # name of the Secret
+      key: redis_password # name of the key in the Secret
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: controller-scaler
+  namespace: 12-factor-app
+spec:
+  scaleTargetRef:
+    name: controller
+  pollingInterval: 15
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: redis-streams
+    metadata:
+      address: redis-master.12-factor-app.svc.cluster.local:6379
+      stream: events-topic
+      consumerGroup: autoscaling-subscriber
+      pendingEntriesCount: "10"
+    authenticationRef:
+      name: keda-redis-stream-triggerauth
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: go-events-scaler
+  namespace: 12-factor-app
+spec:
+  scaleTargetRef:
+    name: go-events
+  pollingInterval: 15
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: redis-streams
+    metadata:
+      address: redis-master.12-factor-app.svc.cluster.local:6379
+      stream: events-topic
+      consumerGroup: autoscaling-subscriber
+      pendingEntriesCount: "10"
+    authenticationRef:
+      name: keda-redis-stream-triggerauth
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: messages-scaler
+  namespace: 12-factor-app
+spec:
+  scaleTargetRef:
+    name: messages
+  pollingInterval: 15
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: redis-streams
+    metadata:
+      address: redis-master.12-factor-app.svc.cluster.local:6379
+      stream: events-topic
+      consumerGroup: autoscaling-subscriber
+      pendingEntriesCount: "10"
+    authenticationRef:
+      name: keda-redis-stream-triggerauth

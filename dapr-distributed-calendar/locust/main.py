@@ -1,4 +1,5 @@
 from locust import HttpUser, task, between
+import random
 
 default_headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36'}
 
@@ -7,7 +8,11 @@ class EventsUser(HttpUser):
     
     @task
     def event_lifecycle(self):
-        for event_id in range(100, 105):
+        user_id = random.random() + random.random() * random.random()
+
+        for i in range(5):
+            event_id = user_id * 1000 + i  # Create a unique event ID based on the user ID
+
             # Create an event
             headers = {
                 'Content-Type': 'application/json',
@@ -22,13 +27,14 @@ class EventsUser(HttpUser):
             }
 
             # Send the POST request to create an event
-            response = self.client.post(f'/newevent', json=data, headers=headers)
+            response = self.client.post('/newevent', json=data, headers=headers)
 
             # Check if the request was successful
             if response.status_code == 200:
                 print(f"Event {event_id} created successfully")
             else:
                 print(f"Failed to create event {event_id}. Status code: {response.status_code}")
+                continue  # Skip the rest of the loop for this event_id
             
             # Get the event
             response = self.client.get(f'/event/{event_id}')
@@ -38,6 +44,7 @@ class EventsUser(HttpUser):
                 print(f"Event {event_id} retrieved successfully")
             else:
                 print(f"Failed to retrieve event {event_id}. Status code: {response.status_code}")
+                continue  # Skip the rest of the loop for this event_id
 
             # Update the event
             updated_data = {
@@ -53,6 +60,7 @@ class EventsUser(HttpUser):
                 print(f"Event {event_id} updated successfully")
             else:
                 print(f"Failed to update event {event_id}. Status code: {response.status_code}")
+                continue  # Skip the rest of the loop for this event_id
 
             # Delete the event
             response = self.client.delete(f'/event/{event_id}')
@@ -62,3 +70,6 @@ class EventsUser(HttpUser):
                 print(f"Event {event_id} deleted successfully")
             else:
                 print(f"Failed to delete event {event_id}. Status code: {response.status_code}")
+
+        # Stop the user after completing the lifecycle
+        # raise StopUser
