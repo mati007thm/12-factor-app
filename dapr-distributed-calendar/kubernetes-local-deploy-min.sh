@@ -94,7 +94,7 @@ kubectl apply -f kubernetes/.
 # setup OpenCost for cost monitoring OPTIONAL
 # kubectl create namespace opencost
 # helm install opencost --repo https://opencost.github.io/opencost-helm-chart opencost \
-#   --namespace opencost -f open-cost/local.yaml --wait
+#   --namespace opencost -f open-cost/values.yaml --wait
 # kubectl apply -f open-cost/ingress.yaml
 
 # setup kubecost for cost monitoring OPTIONAL

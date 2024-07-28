@@ -1,18 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: opencost-aws-ingress
-  namespace: opencost
+  name: locust-aws-ingress
+  namespace: 12-factor-app
 spec:
   ingressClassName: nginx-class
   rules:
-    - host: opencost.mtheuermann.com
+    - host: locust.mtheuermann.com
       http:
         paths:
         - path: /
           pathType: Prefix
           backend:
             service:
-              name: opencost
+              name: locust
               port:
-                number: 9090
+                number: 8089

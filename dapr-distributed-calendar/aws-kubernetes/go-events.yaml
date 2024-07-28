@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-events
+  namespace: 12-factor-app
+  labels:
+    app: go-events
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-events
+  template:
+    metadata:
+      labels:
+        app: go-events
+      annotations:
+        # instrumentation.opentelemetry.io/inject-go: "go-instrumentation"
+        # instrumentation.opentelemetry.io/otel-go-auto-target-exe: '/bin/app'
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "go-events"
+        dapr.io/app-port: "6000"
+        dapr.io/config: "appconfig"
+        dapr.io/log-as-json: "true"
+        # our daprd memory settings
+        # dapr.io/sidecar-memory-limit: "1000Mi"   # your memory limit
+        # dapr.io/env: "GOMEMLIMIT=900MiB"         # 90% of your memory limit. Also notice the suffix "MiB" instead of "Mi"
+    spec:
+      containers:
+      - name: go-events
+        image: mati007thm/dapr-distributed-calendar_go-events:manual
+        env:
+        - name: APP_PORT
+          value: "6000"
+        - name: DAPR_HTTP_PORT
+          value: "3500"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-dapr-collector.opentelemetry:4317"
+        ports:
+        - containerPort: 6000
+        imagePullPolicy: Always
+        securityContext:
+          privileged: true
+          runAsUser: 0

@@ -2,8 +2,9 @@
 worker:
   hpa:
     enabled: true
-    minReplicas: 2
+    minReplicas: 10
     maxReplicas: 100
+    targetCPUUtilizationPercentage: 40
   resources:
     limits:
       cpu: 1300m
@@ -11,3 +12,12 @@ worker:
     requests:
       cpu: 1300m
       memory: 5G
+loadtest:
+  name: my-loadtest
+  locust_locustfile_configmap: my-loadtest-locustfile
+  locust_host: http://controller.12-factor-app:3000
+  environment:
+    LOCUST_AUTOSTART: "true"
+master:
+  environment:
+    LOCUST_RUN_TIME: 1m
