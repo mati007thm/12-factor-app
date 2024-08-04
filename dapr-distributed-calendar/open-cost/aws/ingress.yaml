@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: opencost-aws-ingress
+  namespace: opencost
+spec:
+  ingressClassName: nginx-class
+  rules:
+    - host: opencost.mtheuermann.com
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: opencost
+              port:
+                number: 9090

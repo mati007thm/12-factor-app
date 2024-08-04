@@ -28,3 +28,25 @@ prometheus:
           - source_labels: [__meta_kubernetes_pod_container_name]
             action: keep
             regex: "traefik"
+      - job_name: opencost
+        honor_labels: true
+        scrape_interval: 1m
+        scrape_timeout: 10s
+        metrics_path: /metrics
+        scheme: http
+        dns_sd_configs:
+        - names:
+          - opencost.opencost
+          type: 'A'
+          port: 9003
+      # - job_name: kubecost
+      #   honor_labels: true
+      #   scrape_interval: 1m
+      #   scrape_timeout: 10s
+      #   metrics_path: /metrics
+      #   scheme: http
+      #   dns_sd_configs:
+      #   - names:
+      #     - kubecost-cost-analyzer.<namespace-of-your-kubecost>
+      #     type: 'A'
+      #     port: 9003

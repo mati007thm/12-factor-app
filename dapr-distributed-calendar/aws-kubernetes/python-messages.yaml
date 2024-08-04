@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messages
+  namespace: 12-factor-app
+  labels:
+    app: messages
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messages
+  template:
+    metadata:
+      labels:
+        app: messages
+      annotations:
+        # instrumentation.opentelemetry.io/inject-python: "python-instrumentation"
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "messages"
+        dapr.io/app-port: "5000"
+        dapr.io/config: "appconfig"
+        dapr.io/log-as-json: "true"
+        # our daprd memory settings
+        # dapr.io/sidecar-memory-limit: "1000Mi"   # your memory limit
+        # dapr.io/env: "GOMEMLIMIT=900MiB"         # 90% of your memory limit. Also notice the suffix "MiB" instead of "Mi"
+    spec:
+      containers:
+      - name: messages
+        image: mati007thm/dapr-distributed-calendar_messages:manual
+        env:
+        - name: "APP_PORT"
+          value: "5000"
+        - name: FLASK_RUN_PORT
+          value: "5000"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-dapr-collector.opentelemetry:4317"
+        ports:
+        - containerPort: 5000
+        imagePullPolicy: Always

@@ -1,0 +1,37 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: controller-aws-ingress
+  namespace: 12-factor-app
+spec:
+  ingressClassName: nginx-class
+  rules:
+    - host: 12factor.mtheuermann.com
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: controller
+              port:
+                number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dapr-aws-ingress
+  namespace: dapr-system
+spec:
+  ingressClassName: nginx-class
+  rules:
+    - host: dapr.mtheuermann.com
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: dapr-dashboard
+              port:
+                number: 8080

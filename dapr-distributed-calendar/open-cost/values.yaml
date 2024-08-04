@@ -1,0 +1,23 @@
+# NetworkPolicies for ingress
+networkPolicies:
+  # -- Internal Prometheus settings related to NetworkPolicies
+  prometheus:
+    # -- Namespace where internal Prometheus is installed
+    namespace: observability
+    # -- Pod port of in-cluster Prometheus
+    port: 9090
+    # -- Labels applied to the Prometheus server pod(s)
+    labels:
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/instance: prometheus-kube-prometheus-prometheus
+opencost:
+  prometheus:
+    internal:
+      # -- Use in-cluster Prometheus
+      enabled: true
+      # -- Service name of in-cluster Prometheus
+      serviceName: prometheus-kube-prometheus-prometheus
+      # -- Namespace of in-cluster Prometheus
+      namespaceName: observability
+      # -- Service port of in-cluster Prometheus
+      port: 9090

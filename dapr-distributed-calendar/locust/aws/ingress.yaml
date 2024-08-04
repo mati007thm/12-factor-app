@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: locust-aws-ingress
+  namespace: 12-factor-app
+spec:
+  ingressClassName: nginx-class
+  rules:
+    - host: locust.mtheuermann.com
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: locust
+              port:
+                number: 8089

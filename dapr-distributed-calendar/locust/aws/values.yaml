@@ -1,0 +1,21 @@
+# https://github.com/deliveryhero/helm-charts/blob/master/stable/locust/values.yaml
+worker:
+  hpa:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 40
+  resources:
+    limits:
+      memory: 2G
+    requests:
+      memory: 2G
+loadtest:
+  name: my-loadtest
+  locust_locustfile_configmap: my-loadtest-locustfile
+  locust_host: http://12factor.mtheuermann.com
+  environment:
+    LOCUST_AUTOSTART: "true"
+master:
+  environment:
+    LOCUST_RUN_TIME: 1m

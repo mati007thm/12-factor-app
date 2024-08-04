@@ -1,0 +1,14 @@
+# @section Redis&reg; replicas configuration parameters
+# https://github.com/bitnami/charts/blob/main/bitnami/redis/values.yaml
+replica:
+  autoscaling:
+    # @param replica.autoscaling.enabled Enable replica autoscaling settings
+    enabled: true
+    # @param replica.autoscaling.minReplicas Minimum replicas for the pod autoscaling
+    minReplicas: 1
+    # @param replica.autoscaling.maxReplicas Maximum replicas for the pod autoscaling
+    maxReplicas: 100
+    # @param replica.autoscaling.targetCPU Percentage of CPU to consider when autoscaling
+    targetCPU: "75"
+    # @param replica.autoscaling.targetMemory Percentage of Memory to consider when autoscaling
+    targetMemory: "75"

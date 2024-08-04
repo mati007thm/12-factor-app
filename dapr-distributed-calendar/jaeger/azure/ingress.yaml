@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jaeger-azure-ingress
+  namespace: observability
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx-class
+  rules:
+  - http:
+      paths:
+      - path: /jaeger(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: simplest-query
+            port:
+              number: 16686

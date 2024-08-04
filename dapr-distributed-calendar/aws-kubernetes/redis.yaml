@@ -10,7 +10,6 @@ spec:
   - name: redisHost
     value: redis-master:6379
   - name: redisPassword
-    # value: "jW6UBn6aea" # kubectl get secret --namespace default redis -o jsonpath="{.data.redis-password}" | base64 --decode
     secretKeyRef:
       name: redis
       key: redis-password
@@ -31,7 +30,6 @@ spec:
   - name: redisHost
     value: redis-master:6379
   - name: redisPassword
-    # value: "jW6UBn6aea" # kubectl get secret --namespace 12-factor-app redis -o jsonpath="{.data.redis-password}" | base64 --decode
     secretKeyRef:
       name: redis
       key: redis-password
@@ -63,6 +61,16 @@ spec:
   pollingInterval: 15
   minReplicaCount: 1
   maxReplicaCount: 10
+  advanced:
+    restoreToOriginalReplicaCount: true
+    horizontalPodAutoscalerConfig:
+      behavior:                                             
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 15
   triggers:
   - type: redis-streams
     metadata:
@@ -84,6 +92,16 @@ spec:
   pollingInterval: 15
   minReplicaCount: 1
   maxReplicaCount: 10
+  advanced:
+    restoreToOriginalReplicaCount: true
+    horizontalPodAutoscalerConfig:
+      behavior:                                             
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 15
   triggers:
   - type: redis-streams
     metadata:
@@ -105,6 +123,16 @@ spec:
   pollingInterval: 15
   minReplicaCount: 1
   maxReplicaCount: 10
+  advanced:
+    restoreToOriginalReplicaCount: true
+    horizontalPodAutoscalerConfig:
+      behavior:                                             
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 15
   triggers:
   - type: redis-streams
     metadata:

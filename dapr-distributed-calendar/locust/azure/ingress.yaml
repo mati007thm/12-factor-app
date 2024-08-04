@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: locust-azure-ingress
+  namespace: 12-factor-app
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx-class
+  rules:
+  - http:
+      paths:
+      - path: /locust(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: locust
+            port:
+              number: 8089
