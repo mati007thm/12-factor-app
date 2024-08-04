@@ -8,7 +8,7 @@ replica:
     # @param replica.autoscaling.enabled Enable replica autoscaling settings
     enabled: true
     # @param replica.autoscaling.minReplicas Minimum replicas for the pod autoscaling
-    minReplicas: 3
+    minReplicas: 1
     # @param replica.autoscaling.maxReplicas Maximum replicas for the pod autoscaling
     maxReplicas: 100
     # @param replica.autoscaling.targetCPU Percentage of CPU to consider when autoscaling

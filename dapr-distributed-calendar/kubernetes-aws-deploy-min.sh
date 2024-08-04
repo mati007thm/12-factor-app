@@ -14,6 +14,7 @@ EOF
 kubectl create namespace 12-factor-app
 
 # install prometheus OPTIONAL
+kubectl create namespace observability
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 helm install prometheus prometheus-community/kube-prometheus-stack \
@@ -66,14 +67,12 @@ helm install opencost --repo https://opencost.github.io/opencost-helm-chart open
 kubectl apply -f open-cost/aws/ingress.yaml
 
 # setup locust for loadgeneration OPTIONAL
-# https://github.com/deliveryhero/helm-charts/tree/master/stable/locust
-# https://medium.com/teamsnap-engineering/load-testing-a-service-with-20-000-requests-per-second-with-locust-helm-and-kustomize-ea9bea02ae28
 kubectl create configmap my-loadtest-locustfile --from-file locust/main.py -n 12-factor-app
 helm repo add deliveryhero https://charts.deliveryhero.io/
 helm repo update
 helm install locust deliveryhero/locust \
   --namespace 12-factor-app \
-  --values locust/values.yaml \
+  --values locust/aws/values.yaml \
   --wait
 kubectl apply -f locust/aws/ingress.yaml
 

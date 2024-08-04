@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: controller-azure-ingress
+  namespace: 12-factor-app
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx-class
+  rules:
+  - http:
+      paths:
+      - path: /controller(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: controller
+            port:
+              number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dapr-azure-ingress
+  namespace: dapr-system
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx-class
+  rules:
+  - http:
+      paths:
+      - path: /dapr(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: dapr-dashboard
+            port:
+              number: 8080

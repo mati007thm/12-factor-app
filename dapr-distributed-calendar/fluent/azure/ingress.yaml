@@ -1,8 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: opencost-azure-ingress
-  namespace: opencost
+  name: kibana-azure-ingress
+  namespace: observability
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-regex: "true"
@@ -12,10 +12,10 @@ spec:
   rules:
   - http:
       paths:
-      - path: /opencost(/|$)(.*)
+      - path: /kibana(/|$)(.*)
         pathType: Prefix
         backend:
           service:
-            name: opencost
+            name: kibana-kibana
             port:
-              number: 9090
+              number: 5601

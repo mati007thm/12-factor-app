@@ -99,31 +99,11 @@ helm install opencost --repo https://opencost.github.io/opencost-helm-chart open
   --namespace opencost -f open-cost/values.yaml --wait
 kubectl apply -f open-cost/ingress.yaml
 
-# setup kubecost for cost monitoring OPTIONAL
-# helm upgrade --install kubecost \
-#   --repo https://kubecost.github.io/cost-analyzer/ cost-analyzer \
-#   --namespace kubecost --create-namespace \
-#   --set global.prometheus.fqdn=http://prometheus-kube-prometheus-prometheus.observability.svc:9090 \
-#   --set global.prometheus.enabled=false \
-#   --set kubecostToken="bWF0dGhpYXMudGhldWVybWFubkBpY2xvdWQuY29txm343yadf98" --wait
-# helm upgrade --install kubecost cost-analyzer \
-#   --repo https://kubecost.github.io/cost-analyzer/ \
-#   --namespace kubecost --create-namespace \
-#   --set kubecostToken="bWF0dGhpYXMudGhldWVybWFubkBpY2xvdWQuY29txm343yadf98" --wait
-# kubectl apply -f kubecost/ingress.yaml
-
 # setup locust for loadgeneration OPTIONAL
-# https://github.com/deliveryhero/helm-charts/tree/master/stable/locust
-# https://medium.com/teamsnap-engineering/load-testing-a-service-with-20-000-requests-per-second-with-locust-helm-and-kustomize-ea9bea02ae28
 kubectl create configmap my-loadtest-locustfile --from-file locust/main.py -n 12-factor-app
 helm repo add deliveryhero https://charts.deliveryhero.io/
 helm repo update
 helm install locust deliveryhero/locust \
-  --set loadtest.name=my-loadtest \
-  --set loadtest.locust_locustfile_configmap=my-loadtest-locustfile \
-  --set loadtest.locust_host=http://controller.12-factor-app:3000 \
-  --set master.environment.LOCUST_RUN_TIME=1m \
-  --set loadtest.environment.LOCUST_AUTOSTART="true" \
   --namespace 12-factor-app \
   --values locust/values.yaml \
   --wait

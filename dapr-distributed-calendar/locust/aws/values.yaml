@@ -13,7 +13,7 @@ worker:
 loadtest:
   name: my-loadtest
   locust_locustfile_configmap: my-loadtest-locustfile
-  locust_host: http://controller.12-factor-app:3000
+  locust_host: http://12factor.mtheuermann.com
   environment:
     LOCUST_AUTOSTART: "true"
 master:
