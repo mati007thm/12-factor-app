@@ -103,7 +103,7 @@ func addEvent(w http.ResponseWriter, r *http.Request) {
 	if string(bodyBytes) != "" {
 		log.Printf("Event with ID %s already exists", id)
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 
@@ -115,6 +115,8 @@ func addEvent(w http.ResponseWriter, r *http.Request) {
 	eventsCounter.Add(context.Background(), 1)
 	log.Printf("Response after posting to state: %s", resp.Status)
 	http.Error(w, "All Okay", http.StatusOK)
+	response := map[string]string{"message": "Event created"}
+	json.NewEncoder(w).Encode(response)
 }
 
 func deleteEvent(w http.ResponseWriter, r *http.Request) {
@@ -141,7 +143,7 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 	if string(bodyBytes) == "" {
 		log.Printf("Event with ID %s does not exist exists", eventID.ID)
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusNotFound)
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 
@@ -157,7 +159,9 @@ func deleteEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("Response after delete call: %s", resp.Status)
-	w.WriteHeader(http.StatusNoContent)
+	w.WriteHeader(http.StatusOK)
+	response := map[string]string{"message": "Event deleted"}
+	json.NewEncoder(w).Encode(response)
 	defer resp.Body.Close()
 	eventsCounter.Add(context.Background(), -1)
 }
@@ -203,11 +207,14 @@ func getEvent(w http.ResponseWriter, r *http.Request) {
 func updateEvent(w http.ResponseWriter, r *http.Request) {
 	var event Event
 
+	// Decode the request body into the 'event' struct
 	err := json.NewDecoder(r.Body).Decode(&event)
 	if err != nil {
 		log.Printf("Error while decoding: %e", err)
+		http.Error(w, "Error decoding request body", http.StatusBadRequest)
 		return
 	}
+
 	log.Printf("Event Name: %s", event.Name)
 	log.Printf("Event Date: %s", event.Date)
 	log.Printf("Event ID: %s", event.ID)
@@ -221,42 +228,58 @@ func updateEvent(w http.ResponseWriter, r *http.Request) {
 	log.Print(string(state))
 	id := data[0]["key"]
 
+	log.Printf("Updating event with ID: %s", id)
+
 	// Check if event with given ID already exists
 	bodyBytes, err := checkEvent(id)
 	if err != nil {
 		log.Printf("Error while checking event: %e", err)
-		return
-	}
-	if string(bodyBytes) == "" {
-		log.Printf("Event with ID %s does not exists", id)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusNotFound)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
+	// If event does not exist, return a not found response
+	if len(bodyBytes) == 0 {
+		log.Printf("Event with ID %s does not exist", id)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	// Update the event (your existing logic)
 	req, err := http.NewRequest(http.MethodPost, stateURL, bytes.NewBuffer(state))
 	if err != nil {
 		log.Fatalln("Error posting to state", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 	client := &http.Client{}
 	_, err = client.Do(req)
 	if err != nil {
 		log.Fatalln("Error updating event", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
+
+	// Respond with a success message
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	response := map[string]string{"message": "Event updated"}
+	json.NewEncoder(w).Encode(response)
 }
 
 func checkEvent(id string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, stateURL+"/"+id, nil)
 	if err != nil {
-		log.Fatalln("Error creating get request", err)
+		log.Printf("Error creating get request: %v", err)
 		return nil, err
 	}
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatalln("Error getting event", err)
+		log.Printf("Error getting event: %v", err)
 		return nil, err
 	}
 

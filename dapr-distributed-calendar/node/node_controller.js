@@ -66,15 +66,51 @@ app.post('/newevent', (req, res) => {
         headers: {
             "Content-Type": "application/json"
         }
-    }).then((response) => {
+    }).then(async(response) => {
         if (!response.ok) {
             throw "Failed to persist state.";
         }
+        try{
+            const reader = response.body.getReader();
+            let responseBody = '';
 
-        console.log("Successfully persisted state.");
-        res.status(200).send({ message: "Event created" });        
-    }).catch(() => {
-        res.status(405).send({message: "Event already exists"});
+            // The following function handles each data chunk
+            function push() {
+                return reader.read().then(({ done, value }) => {
+                    // Is there no more data to read?
+                    if (done) {
+                        // Tell the browser that we have finished sending data
+                        reader.releaseLock();
+                        return;
+                    }
+
+                    // Get the data and append it to the responseBody
+                    responseBody += new TextDecoder().decode(value);
+                    push();
+                });
+            }
+
+            await push();
+
+            // Check if response body is empty or not valid JSON
+            if (!responseBody || Object.keys(responseBody).length === 0) {
+                console.log("Event already exists");
+                console.log("Status: 405")
+                res.status(405).send({message: "Event already exists"});
+                return;
+            }
+            console.log("Successfully persisted state.");
+            console.log("Status: 200")
+            res.status(200).send({ message: "Event created" });
+        } catch (error) {
+            console.log("Error parsing JSON:", error);
+            console.log("Status: 500")
+            res.status(500).send({ message: "Error parsing JSON" });
+        }    
+    }).catch((error) => {
+        console.log(error);
+        console.log("Status: 500")
+        res.status(500).send({message: error});
     });
     send_notif(data)
 });
@@ -92,16 +128,52 @@ app.delete('/event/:id', (req, res) => {
         headers: {
             "Content-Type": "application/json"
         }
-    }).then((response) => {
-        console.log("My status: "+ response.status)
-        if (response.status != 204) {
-            throw "Failed to delete state.";   
+    }).then(async(response) => {
+        if (!response.ok) {
+            throw "Failed to delete state.";
         }
-        console.log("Successfully deleted event.");
-        res.status(204).send();
-    }).catch(() => {
-        res.status(404).send({ message: "Event not found" });
-    }); 
+        try{
+            const reader = response.body.getReader();
+            let responseBody = '';
+
+            // The following function handles each data chunk
+            function push() {
+                return reader.read().then(({ done, value }) => {
+                    // Is there no more data to read?
+                    if (done) {
+                        // Tell the browser that we have finished sending data
+                        reader.releaseLock();
+                        return;
+                    }
+
+                    // Get the data and append it to the responseBody
+                    responseBody += new TextDecoder().decode(value);
+                    push();
+                });
+            }
+
+            await push();
+
+            // Check if response body is empty or not valid JSON
+            if (!responseBody || Object.keys(responseBody).length === 0) {
+                console.log("Event not found");
+                console.log("Status: 404")
+                res.status(404).send({ message: "Event not found" });
+                return;
+            }
+            console.log("Successfully deleted event.");
+            console.log("Status: 204")
+            res.status(204).send();
+        } catch (error) {
+            console.log("Error parsing JSON:", error);
+            console.log("Status: 500")
+            res.status(500).send({ message: "Error parsing JSON" });
+        }
+    }).catch((error) => {
+        console.log(error);
+        console.log("Status: 500")
+        res.status(500).send({message: error});
+    });
 });
 
 app.get('/event/:id', (req, res) =>{
@@ -147,17 +219,21 @@ app.get('/event/:id', (req, res) =>{
             // Check if response body is empty or not valid JSON
             if (!responseBody || Object.keys(responseBody).length === 0) {
                 console.log("Event not found");
+                console.log("Status: 404")
                 res.status(404).send({ message: "Event not found" });
                 return;
             }
             const parsedResponseBody = JSON.parse(responseBody);
+            console.log("Status: 200")
             res.status(200).json(parsedResponseBody);
         } catch (error) {
             console.log("Error parsing JSON:", error);
+            console.log("Status: 500")
             res.status(500).send({ message: "Error parsing JSON" });
         }        
     }).catch((error) => {
         console.log(error);
+        console.log("Status: 500")
         res.status(500).send({message: error});
     });
 })
@@ -184,15 +260,51 @@ app.put('/updateevent/:id', (req, res) => {
         headers: {
             "Content-Type": "application/json"
         }
-    }).then((response) => {
+    }).then(async(response) => {
         if (!response.ok) {
             throw "Failed to update event.";
         }
-        
-        console.log("Successfully updated event.");
-        res.status(200).send({ message: "Event updated" });
-    }).catch(() => {
-        res.status(404).send({ message: "Event not found" });
+        try{
+            const reader = response.body.getReader();
+            let responseBody = '';
+
+            // The following function handles each data chunk
+            function push() {
+                return reader.read().then(({ done, value }) => {
+                    // Is there no more data to read?
+                    if (done) {
+                        // Tell the browser that we have finished sending data
+                        reader.releaseLock();
+                        return;
+                    }
+
+                    // Get the data and append it to the responseBody
+                    responseBody += new TextDecoder().decode(value);
+                    push();
+                });
+            }
+
+            await push();
+
+            // Check if response body is empty or not valid JSON
+            if (!responseBody || Object.keys(responseBody).length === 0) {
+                console.log("Event not found");
+                console.log("Status: 404")
+                res.status(404).send({ message: "Event not found" });
+                return;
+            }
+            console.log("Successfully updated event.");
+            console.log("Status: 200")
+            res.status(200).send({ message: "Event updated" });
+        } catch (error) {
+            console.log("Error parsing JSON:", error);
+            console.log("Status: 500")
+            res.status(500).send({ message: "Error parsing JSON" });
+        }
+    }).catch((error) => {
+        console.log(error);
+        console.log("Status: 500")
+        res.status(500).send({message: error});
     });
 });
 
