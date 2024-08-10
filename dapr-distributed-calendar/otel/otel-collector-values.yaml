@@ -10,8 +10,8 @@ spec:
     receivers:
       otlp:
         protocols:
-          grpc:
-          http:
+          grpc: {}
+          http: {}
       prometheus:
         config:
           scrape_configs:
@@ -37,11 +37,11 @@ spec:
         endpoint: simplest-collector.observability:4317
         tls:
             insecure: true
-      # prometheus:
-      #   enable_open_metrics: true
-      #   endpoint: 0.0.0.0:9464
-      #   resource_to_telemetry_conversion:
-      #     enabled: true
+      prometheus:
+        enable_open_metrics: true
+        endpoint: 0.0.0.0:9464
+        resource_to_telemetry_conversion:
+          enabled: true
 
     service:
       pipelines:
@@ -52,7 +52,7 @@ spec:
         metrics:
           receivers: [otlp, prometheus]
           processors: [memory_limiter, batch]
-          exporters: [debug]
+          exporters: [debug, prometheus]
         logs:
           receivers: [otlp]
           processors: [memory_limiter, batch]
