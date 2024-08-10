@@ -14,14 +14,13 @@ EOF
 kubectl create namespace 12-factor-app
 
 # install OTel Operator
-kubectl create namespace opentelemetry
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 helm repo update
 helm install my-opentelemetry-operator open-telemetry/opentelemetry-operator \
-  --set "manager.collectorImage.repository=otel/opentelemetry-collector-k8s" \
+  --set "manager.collectorImage.repository=otel/opentelemetry-collector-contrib" \
   --set admissionWebhooks.certManager.enabled=false \
   --namespace opentelemetry \
-  --version 0.64.4 \
+  --version 0.66.0 \
   --create-namespace \
   --wait
 
