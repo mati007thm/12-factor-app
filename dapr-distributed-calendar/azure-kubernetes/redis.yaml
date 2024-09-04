@@ -60,7 +60,7 @@ spec:
     name: controller
   pollingInterval: 15
   minReplicaCount: 1
-  maxReplicaCount: 10
+  maxReplicaCount: 5
   advanced:
     restoreToOriginalReplicaCount: true
     horizontalPodAutoscalerConfig:
@@ -80,65 +80,65 @@ spec:
       pendingEntriesCount: "10"
     authenticationRef:
       name: keda-redis-stream-triggerauth
----
-apiVersion: keda.sh/v1alpha1
-kind: ScaledObject
-metadata:
-  name: go-events-scaler
-  namespace: 12-factor-app
-spec:
-  scaleTargetRef:
-    name: go-events
-  pollingInterval: 15
-  minReplicaCount: 1
-  maxReplicaCount: 10
-  advanced:
-    restoreToOriginalReplicaCount: true
-    horizontalPodAutoscalerConfig:
-      behavior:                                             
-        scaleDown:
-          stabilizationWindowSeconds: 300
-          policies:
-          - type: Percent
-            value: 100
-            periodSeconds: 15
-  triggers:
-  - type: redis-streams
-    metadata:
-      address: redis-master.12-factor-app.svc.cluster.local:6379
-      stream: events-topic
-      consumerGroup: autoscaling-subscriber
-      pendingEntriesCount: "10"
-    authenticationRef:
-      name: keda-redis-stream-triggerauth
----
-apiVersion: keda.sh/v1alpha1
-kind: ScaledObject
-metadata:
-  name: messages-scaler
-  namespace: 12-factor-app
-spec:
-  scaleTargetRef:
-    name: messages
-  pollingInterval: 15
-  minReplicaCount: 1
-  maxReplicaCount: 10
-  advanced:
-    restoreToOriginalReplicaCount: true
-    horizontalPodAutoscalerConfig:
-      behavior:                                             
-        scaleDown:
-          stabilizationWindowSeconds: 300
-          policies:
-          - type: Percent
-            value: 100
-            periodSeconds: 15
-  triggers:
-  - type: redis-streams
-    metadata:
-      address: redis-master.12-factor-app.svc.cluster.local:6379
-      stream: events-topic
-      consumerGroup: autoscaling-subscriber
-      pendingEntriesCount: "10"
-    authenticationRef:
-      name: keda-redis-stream-triggerauth
+# ---
+# apiVersion: keda.sh/v1alpha1
+# kind: ScaledObject
+# metadata:
+#   name: go-events-scaler
+#   namespace: 12-factor-app
+# spec:
+#   scaleTargetRef:
+#     name: go-events
+#   pollingInterval: 15
+#   minReplicaCount: 1
+#   maxReplicaCount: 5
+#   advanced:
+#     restoreToOriginalReplicaCount: true
+#     horizontalPodAutoscalerConfig:
+#       behavior:                                             
+#         scaleDown:
+#           stabilizationWindowSeconds: 300
+#           policies:
+#           - type: Percent
+#             value: 100
+#             periodSeconds: 15
+#   triggers:
+#   - type: redis-streams
+#     metadata:
+#       address: redis-master.12-factor-app.svc.cluster.local:6379
+#       stream: events-topic
+#       consumerGroup: autoscaling-subscriber
+#       pendingEntriesCount: "10"
+#     authenticationRef:
+#       name: keda-redis-stream-triggerauth
+# ---
+# apiVersion: keda.sh/v1alpha1
+# kind: ScaledObject
+# metadata:
+#   name: messages-scaler
+#   namespace: 12-factor-app
+# spec:
+#   scaleTargetRef:
+#     name: messages
+#   pollingInterval: 15
+#   minReplicaCount: 1
+#   maxReplicaCount: 10
+#   advanced:
+#     restoreToOriginalReplicaCount: true
+#     horizontalPodAutoscalerConfig:
+#       behavior:                                             
+#         scaleDown:
+#           stabilizationWindowSeconds: 300
+#           policies:
+#           - type: Percent
+#             value: 100
+#             periodSeconds: 15
+#   triggers:
+#   - type: redis-streams
+#     metadata:
+#       address: redis-master.12-factor-app.svc.cluster.local:6379
+#       stream: events-topic
+#       consumerGroup: autoscaling-subscriber
+#       pendingEntriesCount: "10"
+#     authenticationRef:
+#       name: keda-redis-stream-triggerauth

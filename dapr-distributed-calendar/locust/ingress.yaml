@@ -1,14 +1,18 @@
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
   name: locust-ingress
   namespace: 12-factor-app
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host(`locust.127.0.0.1.nip.io`) && PathPrefix(`/`)
-      kind: Rule
-      services:
-        - name: locust
-          port: 8089
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /locust
+            backend:
+              service:
+                name: locust
+                port:
+                  number: 8089
