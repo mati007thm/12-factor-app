@@ -1,29 +1,37 @@
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
   name: prometheus-ingress
   namespace: observability
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host(`prom.127.0.0.1.nip.io`) && PathPrefix(`/`)
-      kind: Rule
-      services:
-        - name: prometheus-kube-prometheus-prometheus
-          port: 9090
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /prometheus
+            backend:
+              service:
+                name: prometheus-kube-prometheus-prometheus
+                port:
+                  number: 9090
 ---
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
   name: grafana-ingress
   namespace: observability
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host(`grafana.127.0.0.1.nip.io`) && PathPrefix(`/`)
-      kind: Rule
-      services:
-        - name: prometheus-grafana
-          port: 80
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /grafana
+            backend:
+              service:
+                name: prometheus-grafana
+                port:
+                  number: 80

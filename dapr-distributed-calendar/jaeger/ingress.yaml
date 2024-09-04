@@ -1,14 +1,18 @@
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
   name: jaeger-ingress
   namespace: observability
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host(`jaeger.127.0.0.1.nip.io`) && PathPrefix(`/`)
-      kind: Rule
-      services:
-        - name: simplest-query
-          port: 16686
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /jaeger
+            backend:
+              service:
+                name: simplest-query
+                port:
+                  number: 16686

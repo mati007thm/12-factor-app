@@ -61,7 +61,6 @@ kubectl apply -f azure-kubernetes/.
 kubectl wait --for=condition=ready pod --all --timeout=200s -n 12-factor-app
 
 # setup OpenCost for cost monitoring OPTIONAL
-kubectl create namespace opencost
 helm install opencost --repo https://opencost.github.io/opencost-helm-chart opencost \
   --namespace opencost -f open-cost/values.yaml --wait
 kubectl apply -f open-cost/azure/ingress.yaml

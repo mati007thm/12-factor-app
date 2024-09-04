@@ -1,10 +1,11 @@
 #!/bin/bash
-set -e
+# set -e
 
 # Sets up variables for the cluster name, region and subscription id
 CLUSTER_NAME=loadgen-test
 RESOURCE_GROUP=loadgen-test
-SUBSCRIPTION_ID=<subscription_id>
+SUBSCRIPTION_ID=d0ab8612-6be4-4ebf-84f3-50c2771cc912
+TENANT_ID=f05ae7d3-dff8-4e99-b4c7-09990343e55e
 
 # Updates the kubeconfig for the specified AKS cluster.
 az login
@@ -28,14 +29,14 @@ az role definition create --verbose --role-definition '{
         "Microsoft.Commerce/RateCard/read"
     ],
     "AssignableScopes": [
-        "/subscriptions/'$subscriptionId'"
+        "/subscriptions/'$SUBSCRIPTION_ID'"
     ]
 }'
 
 service_principle=$(az ad sp create-for-rbac \
   --name "OpenCostAccess" \
   --role "OpenCostRole" \
-  --scope "/subscriptions/$subscriptionId" \
+  --scope "/subscriptions/$SUBSCRIPTION_ID" \
   --output json)
 
 app_id=$(echo $service_principle | jq -r '.appId')
@@ -43,12 +44,12 @@ client_secret=$(echo $service_principle | jq -r '.password')
 
 service_key_json=$(cat <<EOF
 {
-    "subscriptionId": "$subscriptionId",
+    "subscriptionId": "$SUBSCRIPTION_ID",
     "serviceKey": {
         "appId": "$app_id",
         "displayName": "OpenCostAccess",
         "password": "$client_secret",
-        "tenant": "$desired_tenant"
+        "tenant": "$TENANT_ID"
     }
 }
 EOF

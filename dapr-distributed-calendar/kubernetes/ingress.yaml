@@ -1,14 +1,37 @@
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
   name: controller-ingress
   namespace: 12-factor-app
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host(`12factor.127.0.0.1.nip.io`) && PathPrefix(`/`)
-      kind: Rule
-      services:
-        - name: controller
-          port: 3000
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /controller
+            backend:
+              service:
+                name: controller
+                port:
+                  number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dapr-aws-ingress
+  namespace: dapr-system
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /dapr
+            backend:
+              service:
+                name: dapr-dashboard
+                port:
+                  number: 8080
