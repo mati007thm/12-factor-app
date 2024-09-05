@@ -1,5 +1,20 @@
 #!/bin/sh
 
+# Create storage class
+kubectl apply -f - <<EOF
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-storage
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+EOF
+
+# install OpenEBS
+# helm repo add openebs https://openebs.github.io/openebs
+# helm repo update
+# helm upgrade --install openebs --namespace openebs openebs/openebs --set mayastor.etcd.replicaCount=1 --create-namespace --wait
+
 # create 12-factor-app namespace
 kubectl create namespace 12-factor-app
 
@@ -20,6 +35,7 @@ helm upgrade --install dapr dapr/dapr \
     --namespace dapr-system \
     --create-namespace \
     --set global.logAsJson=true \
+    --set dapr_scheduler.cluster.storageClassName=local-storage \
     --wait
 
 # install dapr dashboard OPTIONAL
