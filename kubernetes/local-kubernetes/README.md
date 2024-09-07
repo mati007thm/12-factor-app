@@ -53,7 +53,7 @@ The following setup is run on Ubuntu 24.04 LTS:
     sudo apt-get install helm
     ```
 
-14. Install ingress: `helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx`
+14. Install ingress: `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/baremetal/deploy.yaml`
 
 Additional steps for volume creation:
 

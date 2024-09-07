@@ -3,9 +3,8 @@ kind: Ingress
 metadata:
   name: controller-ingress
   namespace: 12-factor-app
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
     - http:
         paths:
@@ -22,9 +21,8 @@ kind: Ingress
 metadata:
   name: dapr-aws-ingress
   namespace: dapr-system
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
     - http:
         paths:

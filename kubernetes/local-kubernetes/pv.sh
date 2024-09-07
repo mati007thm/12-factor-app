@@ -39,7 +39,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: local-storage
   local:
-    path: /dev/xvdb
+    path: /dev/root
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -63,7 +63,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: local-storage
   local:
-    path: /dev/xvdb
+    path: /dev/root
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -87,7 +87,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: local-storage
   local:
-    path: /dev/xvdb
+    path: /dev/root
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -111,7 +111,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: local-storage
   local:
-    path: /dev/xvdb
+    path: /dev/root
   nodeAffinity:
     required:
       nodeSelectorTerms:

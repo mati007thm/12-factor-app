@@ -3,9 +3,8 @@ kind: Ingress
 metadata:
   name: kubecost-ingress
   namespace: kubecost
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
     - http:
         paths:
