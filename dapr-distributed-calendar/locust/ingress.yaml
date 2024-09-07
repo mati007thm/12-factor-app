@@ -3,9 +3,8 @@ kind: Ingress
 metadata:
   name: locust-ingress
   namespace: 12-factor-app
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
     - http:
         paths:
