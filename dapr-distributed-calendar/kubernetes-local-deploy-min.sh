@@ -26,7 +26,6 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
         --namespace observability \
         --values prometheus/kube-prometheus-stack-values.yaml \
         --wait
-kubectl apply -f ./prometheus/ingress.yaml
 
 # install dapr
 helm repo add dapr https://dapr.github.io/helm-charts/
@@ -70,17 +69,6 @@ kubectl wait --for=condition=ready pod --all --timeout=200s -n 12-factor-app
 kubectl create namespace opencost
 helm install opencost --repo https://opencost.github.io/opencost-helm-chart opencost \
   --namespace opencost -f open-cost/values.yaml --wait
-kubectl apply -f open-cost/ingress.yaml
-
-# setup locust for loadgeneration OPTIONAL
-kubectl create configmap my-loadtest-locustfile --from-file locust/main.py -n 12-factor-app
-helm repo add deliveryhero https://charts.deliveryhero.io/
-helm repo update
-helm install locust deliveryhero/locust \
-  --namespace 12-factor-app \
-  --values locust/values.yaml \
-  --wait
-kubectl apply -f locust/ingress.yaml
 
 # get redis password (for manual interactions with the redis cli) OPTIONAL
 redis_pwd=$(kubectl get secret redis -n 12-factor-app -o jsonpath='{.data.redis-password}' | base64 --decode)

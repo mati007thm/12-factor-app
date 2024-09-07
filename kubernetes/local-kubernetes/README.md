@@ -53,7 +53,15 @@ The following setup is run on Ubuntu 24.04 LTS:
     sudo apt-get install helm
     ```
 
-14. Install ingress: `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/baremetal/deploy.yaml`
+14. Install ingress:
+
+    ```shell
+    helm repo add traefik https://traefik.github.io/charts
+    helm repo update
+    helm install traefik traefik/traefik
+    ```
+
+15. If the External IP is not automatically assigned use: `kubectl patch svc  traefik -p '{"spec":{"externalIPs":["IP_ADDRESS"]}}'`
 
 Additional steps for volume creation:
 
