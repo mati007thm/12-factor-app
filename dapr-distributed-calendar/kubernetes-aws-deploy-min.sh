@@ -30,6 +30,7 @@ helm upgrade --install dapr dapr/dapr \
     --namespace dapr-system \
     --create-namespace \
     --set global.logAsJson=true \
+    --set dapr_scheduler.cluster.storageClassName=gp2 \
     --wait
 
 # install KEDA for scaling
@@ -67,14 +68,14 @@ helm install opencost --repo https://opencost.github.io/opencost-helm-chart open
 kubectl apply -f open-cost/aws/ingress.yaml
 
 # setup locust for loadgeneration OPTIONAL
-kubectl create configmap my-loadtest-locustfile --from-file locust/main.py -n 12-factor-app
-helm repo add deliveryhero https://charts.deliveryhero.io/
-helm repo update
-helm install locust deliveryhero/locust \
-  --namespace 12-factor-app \
-  --values locust/aws/values.yaml \
-  --wait
-kubectl apply -f locust/aws/ingress.yaml
+# kubectl create configmap my-loadtest-locustfile --from-file locust/main.py -n 12-factor-app
+# helm repo add deliveryhero https://charts.deliveryhero.io/
+# helm repo update
+# helm install locust deliveryhero/locust \
+#   --namespace 12-factor-app \
+#   --values locust/aws/values.yaml \
+#   --wait
+# kubectl apply -f locust/aws/ingress.yaml
 
 # get redis password (for manual interactions with the redis cli) OPTIONAL
 redis_pwd=$(kubectl get secret redis -n 12-factor-app -o jsonpath='{.data.redis-password}' | base64 --decode)
