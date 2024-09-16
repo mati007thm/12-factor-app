@@ -70,6 +70,7 @@ helm upgrade --install dapr dapr/dapr \
     --namespace dapr-system \
     --create-namespace \
     --set global.logAsJson=true \
+    --set dapr_scheduler.cluster.storageClassName=managed \
     --wait
 
 # install dapr dashboard OPTIONAL
